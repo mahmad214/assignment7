@@ -1,0 +1,31 @@
+version: "3"
+services:
+
+  web:
+    image: nginx:latest
+    ports:
+      - 8081:80
+    volumes:
+      - html:/usr/share/nginx/html
+
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: mysecretpassword
+      MYSQL_DATABASE: mydatabase
+    volumes:
+      - type: volume
+        source: data
+        target: /var/db/
+  users:
+    image: fedora
+    command: ["/bin/sh","-c","sudo mkdir -m 777 /structure; \
+              sudo -u sync touch /structure/sync-work; \
+              sudo -u nobody touch /structure/nobody-work; \
+              sudo adduser -u 5000 collin; \
+              tail -f /dev/null"]
+volumes:
+  html:
+    driver: local
+  data:
+    driver: local
